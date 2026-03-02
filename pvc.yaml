@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-path-pvc
+  namespace: default
+  # This PVC uses the local-path storage class provided by K3s out-of-the-box.
+  # For production workloads on AWS, consider using the EBS CSI driver and an
+  # ebs-sc StorageClass instead (storageClassName: ebs-sc).
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 2Gi

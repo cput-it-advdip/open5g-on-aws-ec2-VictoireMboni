@@ -1,0 +1,30 @@
+# Amazon ECR registry configuration for K3s
+# This file configures K3s to authenticate with Amazon ECR as a private registry.
+#
+# Prerequisites:
+#   1. Attach the AmazonEC2ContainerRegistryReadOnly IAM policy to your EC2 instance profile, OR
+#   2. Use the amazon-ecr-credential-helper (see below).
+#
+# Option A — Instance Profile (recommended for EC2)
+# No credentials are required in this file when the EC2 instance profile has ECR read access.
+# K3s will use the instance metadata service (IMDS) automatically via the credential helper.
+#
+# Option B — Explicit credentials (e.g., for non-EC2 environments or cross-account access)
+# Replace <aws-account-id> and <region> with your values.
+# Generate a temporary password with:
+#   aws ecr get-login-password --region <region>
+
+mirrors:
+  # Replace <aws-account-id> and <region> with your values
+  <aws-account-id>.dkr.ecr.<region>.amazonaws.com:
+    endpoint:
+      - "https://<aws-account-id>.dkr.ecr.<region>.amazonaws.com"
+
+configs:
+  "<aws-account-id>.dkr.ecr.<region>.amazonaws.com":
+    auth:
+      # Leave username as "AWS" — this is required by ECR
+      username: AWS
+      # Provide the token from: aws ecr get-login-password --region <region>
+      # Note: ECR tokens expire after 12 hours. Consider using the credential helper instead.
+      password: <ecr-auth-token>

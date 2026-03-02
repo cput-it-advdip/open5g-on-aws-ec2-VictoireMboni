@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app2
+  labels:
+    app.kubernetes.io/name: web-app2
+  name: web-app2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: web-app2
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: web-app2
+    spec:
+      containers:
+      # Example using an image pulled from Amazon ECR.
+      # Replace <aws-account-id>, <region>, and <image>:<tag> with your values.
+      # Ensure the EC2 instance profile has the AmazonEC2ContainerRegistryReadOnly policy attached.
+      - image: <aws-account-id>.dkr.ecr.<region>.amazonaws.com/<image>:<tag>
+        name: web-app2
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app2
+  labels:
+    app.kubernetes.io/name: web-app2
+spec:
+  selector:
+    app.kubernetes.io/name: web-app2
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8000
+  # LoadBalancer type automatically provisions an AWS ELB/NLB when the
+  # AWS cloud-controller-manager (or k3s cloud provider) is configured.
+  type: LoadBalancer
